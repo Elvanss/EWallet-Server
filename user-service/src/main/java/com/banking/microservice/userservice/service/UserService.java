@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -70,9 +69,12 @@ public class UserService {
             throw new BadCredentialsException("Incorrect email or password", e);
         }
 
+        // Generate token
         final UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsServiceImpl.loadUserByUsername(email);
         final String token = jwtService.generateToken(userDetails);
-        return new LoginResponse(token);
+        final String userEmail = userDetails.getUsername();
+
+        return new LoginResponse(token, userEmail);
 
     }
 
